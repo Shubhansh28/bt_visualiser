@@ -8,7 +8,7 @@ let editor = null;
 let currentFormat = "leetcode";
 
 // Render Backend URL (Update this with your actual Render URL)
-const API_BASE_URL = "https://your-render-app-name.onrender.com";
+const API_BASE_URL = "https://bt-visualiser.onrender.com";
 
 // Simulation state
 let simState = {
