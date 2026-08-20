@@ -7,8 +7,8 @@
 let editor = null;
 let currentFormat = "leetcode";
 
-// Backend API URL (empty = same origin, since Flask serves both frontend & API)
-const API_BASE_URL = "";
+// Render Backend URL
+const API_BASE_URL = "https://bt-visualiser.onrender.com";
 
 // Simulation state
 let simState = {

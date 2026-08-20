@@ -184,7 +184,7 @@ def _exec_code_in_thread(full_code, result_dict):
 
 @app.route("/")
 def index():
-    return send_from_directory(".", "index.html")
+    return jsonify({"status": "API is running"})
 
 
 @app.route("/run", methods=["POST"])
