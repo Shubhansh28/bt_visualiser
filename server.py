@@ -10,7 +10,7 @@ import json
 import threading
 import traceback
 import collections
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -184,7 +184,7 @@ def _exec_code_in_thread(full_code, result_dict):
 
 @app.route("/")
 def index():
-    return jsonify({"status": "API is running"})
+    return send_from_directory(".", "index.html")
 
 
 @app.route("/run", methods=["POST"])
