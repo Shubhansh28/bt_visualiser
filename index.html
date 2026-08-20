@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BST Playground — Write Python BST solutions, run them, and visualize binary trees interactively.">
+    <title>BST Playground — Binary Tree Compiler & Visualizer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app">
+
+        <!-- ═══ Header / Toolbar ═══ -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🌳</div>
+                <div class="logo-text"><span>BST Playground</span></div>
+            </div>
+
+            <div class="controls">
+                <!-- Tree Input -->
+                <div class="input-group">
+                    <label for="tree-input">Tree</label>
+                    <input type="text" id="tree-input"
+                           placeholder="[1, 2, 3, null, null, 4, 5]"
+                           value="[1, 2, 3, 4, 5, 6, 7]"
+                           spellcheck="false"
+                           autocomplete="off">
+                </div>
+
+                <!-- Format Toggle -->
+                <div class="format-toggle">
+                    <button class="format-btn active" data-format="leetcode">LeetCode</button>
+                    <button class="format-btn" data-format="dash">-1 = null</button>
+                </div>
+
+                <!-- Run Button -->
+                <button class="run-btn" id="run-btn" title="Run (Ctrl+Enter)">
+                    <span class="icon">▶</span> Run
+                </button>
+
+                <!-- Simulate Button -->
+                <button class="simulate-btn" id="simulate-btn" title="Simulate recursion step by step">
+                    <span class="icon">⏯</span> Simulate
+                </button>
+            </div>
+
+            <div class="header-actions">
+                <button class="helpers-btn" id="helpers-btn" title="View available helper functions">
+                    📖 Helpers
+                </button>
+                <button class="reset-btn" id="reset-btn" title="Reset to default template">
+                    ↺ Reset
+                </button>
+            </div>
+        </header>
+
+        <!-- ═══ Main Content ═══ -->
+        <main class="main">
+
+            <!-- Left: Code Editor -->
+            <section class="editor-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span class="dot"></span>
+                        solution.py
+                    </div>
+                    <span style="font-size: 11px; color: var(--text-muted);">Ctrl+Enter to run</span>
+                </div>
+                <div id="editor-container"></div>
+            </section>
+
+            <!-- Right: Output + Tree -->
+            <section class="right-panel">
+
+                <!-- Console Output -->
+                <div class="output-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span class="dot" style="background: var(--cyan);"></span>
+                            Console Output
+                        </div>
+                    </div>
+                    <div class="output-content">
+                        <div class="output-placeholder" id="output-placeholder">
+                            <span>⌨️</span>
+                            Click <strong>▶ Run</strong> or press <strong>Ctrl+Enter</strong> to execute
+                        </div>
+                        <pre class="output-text" id="output-text"></pre>
+                    </div>
+                </div>
+
+                <!-- Tree Visualization -->
+                <div class="tree-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span class="dot" style="background: var(--accent-secondary);"></span>
+                            Tree Visualization
+                        </div>
+                    </div>
+                    <div class="tree-canvas-wrap">
+                        <canvas id="tree-canvas"></canvas>
+                        <div class="tree-placeholder" id="tree-placeholder">
+                            <span class="tree-icon">🌲</span>
+                            <span>Your tree will appear here after running</span>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+
+        <!-- ═══ Simulation Controls Overlay ═══ -->
+        <div class="sim-controls" id="sim-controls">
+            <div class="sim-controls-inner">
+                <div class="sim-controls-left">
+                    <button class="sim-ctrl-btn" id="sim-play-btn" title="Play / Pause">
+                        <span id="sim-play-icon">▶</span>
+                    </button>
+                    <button class="sim-ctrl-btn" id="sim-step-btn" title="Step Forward">
+                        ⏭
+                    </button>
+                    <button class="sim-ctrl-btn sim-stop" id="sim-stop-btn" title="Stop Simulation">
+                        ⏹
+                    </button>
+                </div>
+                <div class="sim-controls-center">
+                    <span class="sim-status" id="sim-status">Ready</span>
+                    <span class="sim-step-counter" id="sim-step-counter">0 / 0</span>
+                </div>
+                <div class="sim-controls-right">
+                    <label class="sim-speed-label" for="sim-speed">Speed</label>
+                    <input type="range" id="sim-speed" class="sim-speed-slider" min="1" max="10" value="5">
+                    <span class="sim-speed-val" id="sim-speed-val">5x</span>
+                </div>
+            </div>
+            <!-- Call Stack -->
+            <div class="sim-callstack" id="sim-callstack">
+                <div class="sim-callstack-title">📚 Call Stack</div>
+                <div class="sim-callstack-items" id="sim-callstack-items"></div>
+            </div>
+        </div>
+
+        <!-- ═══ Simulation Error Banner ═══ -->
+        <div class="sim-error-banner" id="sim-error-banner">
+            <span class="sim-error-icon">❌</span>
+            <span class="sim-error-text" id="sim-error-text"></span>
+            <button class="sim-error-close" id="sim-error-close">✕</button>
+        </div>
+
+        <!-- ═══ Status Bar ═══ -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    Ready
+                </div>
+                <span>Python • BST Mode</span>
+            </div>
+            <div class="status-right">
+                <span>Local execution</span>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ═══ Helpers Drawer ═══ -->
+    <div class="backdrop" id="backdrop"></div>
+    <aside class="helpers-drawer" id="helpers-drawer">
+        <div class="helpers-drawer-header">
+            <h3>📖 Available Helper Functions</h3>
+            <button class="helpers-close-btn" id="helpers-close">✕</button>
+        </div>
+        <div class="helpers-content">
+            <div class="helper-item">
+                <div class="helper-name">TreeNode(val, left=None, right=None)</div>
+                <div class="helper-desc">Standard binary tree node. Fields: <code>val</code>, <code>left</code>, <code>right</code>.</div>
+            </div>
+            <div class="helper-item">
+                <div class="helper-name">root</div>
+                <div class="helper-desc">Pre-built from your tree input above. Use this variable directly in your solution.</div>
+            </div>
+            <hr style="border-color: var(--border-color); margin: 12px 0;">
+            <div class="helper-item">
+                <div class="helper-name">build_tree(arr)</div>
+                <div class="helper-desc">Builds a tree from a LeetCode-style list. <code>None</code> = no node.</div>
+            </div>
+            <div class="helper-item">
+                <div class="helper-name">build_tree_dash(arr)</div>
+                <div class="helper-desc">Builds a tree from a list where <code>-1</code> = no node.</div>
+            </div>
+            <hr style="border-color: var(--border-color); margin: 12px 0;">
+            <div class="helper-item">
+                <div class="helper-name">print_tree(root)</div>
+                <div class="helper-desc">Pretty-prints the tree structure with branch lines to the console.</div>
+            </div>
+            <div class="helper-item">
+                <div class="helper-name">tree_to_list(root)</div>
+                <div class="helper-desc">Serializes tree back to a LeetCode-style list (level-order).</div>
+            </div>
+            <hr style="border-color: var(--border-color); margin: 12px 0;">
+            <div class="helper-item">
+                <div class="helper-name">inorder(root)</div>
+                <div class="helper-desc">Returns in-order traversal as a list: Left → Root → Right.</div>
+            </div>
+            <div class="helper-item">
+                <div class="helper-name">preorder(root)</div>
+                <div class="helper-desc">Returns pre-order traversal as a list: Root → Left → Right.</div>
+            </div>
+            <div class="helper-item">
+                <div class="helper-name">postorder(root)</div>
+                <div class="helper-desc">Returns post-order traversal as a list: Left → Right → Root.</div>
+            </div>
+            <div class="helper-item">
+                <div class="helper-name">level_order(root)</div>
+                <div class="helper-desc">Returns level-order traversal as a list of lists.</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ═══ Monaco Editor (CDN) ═══ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>
